@@ -66,7 +66,7 @@ const EditUserModal = ({ user, onClose, onSave }) => {
         </form>
         <button
           onClick={onClose}
-          className="mt-4 bg-secondary text-white py-2 px-4 rounded w-full hover:bg-accent transition"
+          className="mt-4 bg-secondary text-white py-2 px-4 rounded w-full hover:bg-red-600 transition"
         >
           Cancel
         </button>

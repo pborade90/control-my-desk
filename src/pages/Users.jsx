@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import EditUserModal from "../components/EditUserModal";
+import { ArrowLeftIcon, ArrowRightIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/20/solid";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -21,6 +22,15 @@ const Users = () => {
     }
   };
 
+  // Scroll to the top whenever `page` changes
+  useEffect(() => {
+    fetchUsers();
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // Smooth scrolling
+    });
+  }, [page]);
+
   // Delete a user
   const handleDelete = async (id) => {
     try {
@@ -36,10 +46,6 @@ const Users = () => {
   const handleSave = (id, updatedData) => {
     setUsers(users.map((user) => (user.id === id ? { ...user, ...updatedData } : user)));
   };
-
-  useEffect(() => {
-    fetchUsers();
-  }, [page]);
 
   // Filtered list of users based on the search term
   const filteredUsers = users.filter((user) =>
@@ -83,16 +89,20 @@ const Users = () => {
               <div className="flex gap-2 mt-4">
                 <button
                   onClick={() => setEditingUser(user)}
-                  className="bg-accent text-white py-2 px-4 rounded hover:bg-highlight"
+                  className="flex items-center gap-2 bg-accent text-white py-2 px-4 rounded-lg hover:bg-highlight focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent"
                 >
-                  Edit
+                  <PencilSquareIcon width={20} />
+                  <span>Edit</span>
                 </button>
+
                 <button
                   onClick={() => handleDelete(user.id)}
-                  className="bg-highlight text-white py-2 px-4 rounded hover:bg-red-600"
+                  className="flex items-center gap-2 bg-highlight text-white py-2 px-4 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-highlight"
                 >
-                  Delete
+                  <TrashIcon width={20} />
+                  <span>Delete</span>
                 </button>
+
               </div>
             </div>
           ))
@@ -106,23 +116,26 @@ const Users = () => {
         <button
           onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
           disabled={page === 1}
-          className={`px-4 py-2 rounded-md ${page === 1
-            ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-            : "bg-accent text-white hover:bg-highlight"
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 ${page === 1
+              ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+              : "bg-accent text-white hover:bg-highlight focus:ring-accent"
             }`}
         >
-          Previous
+          <ArrowLeftIcon width={20} />
+          <span>Previous</span>
         </button>
         <button
           onClick={() => setPage((prev) => (prev < totalPages ? prev + 1 : prev))}
           disabled={page === totalPages}
-          className={`px-4 py-2 rounded-md ${page === totalPages
-            ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-            : "bg-accent text-white hover:bg-highlight"
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 ${page === totalPages
+              ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+              : "bg-accent text-white hover:bg-highlight focus:ring-accent"
             }`}
         >
-          Next
+          <span>Next</span>
+          <ArrowRightIcon width={20} />
         </button>
+
       </div>
 
       {/* Edit User Modal */}
