@@ -1,53 +1,89 @@
+// React imports
 import { useState, useEffect } from "react";
-import axios from "axios";
-import { toast } from "react-toastify";
-import EditUserModal from "../components/EditUserModal";
-import { ArrowLeftIcon, ArrowRightIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/20/solid";
 
+// Library imports
+import axios from "axios"; // For API calls
+import { toast } from "react-toastify"; // For notifications
+
+// Component imports
+import EditUserModal from "../components/EditUserModal"; // Modal for editing user details
+
+// Icon imports from Heroicons
+import {
+  ArrowLeftIcon, // Icon for the "Previous" button
+  ArrowRightIcon, // Icon for the "Next" button
+  PencilSquareIcon, // Icon for the "Edit" button
+  TrashIcon, // Icon for the "Delete" button
+} from "@heroicons/react/20/solid";
+
+/**
+ * Users Component
+ * Displays a list of users with functionalities to edit, delete, and search users,
+ * as well as paginate through the user list.
+ */
 const Users = () => {
+  // State to hold the list of users
   const [users, setUsers] = useState([]);
+  // Current page of users
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1); // Total pages
+  // Total number of pages (from the API)
+  const [totalPages, setTotalPages] = useState(1);
+  // User currently being edited
   const [editingUser, setEditingUser] = useState(null);
-  const [searchTerm, setSearchTerm] = useState(""); // Search term state
+  // Search term for filtering users
+  const [searchTerm, setSearchTerm] = useState("");
 
-  // Fetch users from the API
+  /**
+   * Fetches users from the API for the current page.
+   */
   const fetchUsers = async () => {
     try {
       const response = await axios.get(`https://reqres.in/api/users?page=${page}`);
-      setUsers(response.data.data);
+      setUsers(response.data.data); // Update users list
       setTotalPages(response.data.total_pages); // Update total pages
     } catch (error) {
-      toast.error("Failed to fetch users.");
+      toast.error("Failed to fetch users."); // Show error notification
     }
   };
 
-  // Scroll to the top whenever `page` changes
+  /**
+   * Runs whenever `page` changes to fetch new users
+   * and scrolls to the top of the page.
+   */
   useEffect(() => {
     fetchUsers();
     window.scrollTo({
       top: 0,
-      behavior: "smooth", // Smooth scrolling
+      behavior: "smooth", // Enables smooth scrolling to the top
     });
   }, [page]);
 
-  // Delete a user
+  /**
+   * Deletes a user from the API and updates the state.
+   * @param {number} id - ID of the user to delete.
+   */
   const handleDelete = async (id) => {
     try {
       await axios.delete(`https://reqres.in/api/users/${id}`);
-      setUsers(users.filter((user) => user.id !== id));
-      toast.success("User deleted successfully!");
+      setUsers(users.filter((user) => user.id !== id)); // Remove user from state
+      toast.success("User deleted successfully!"); // Show success notification
     } catch (error) {
-      toast.error("Failed to delete user.");
+      toast.error("Failed to delete user."); // Show error notification
     }
   };
 
-  // Save updated user details
+  /**
+   * Saves the updated user details to the state.
+   * @param {number} id - ID of the user being updated.
+   * @param {object} updatedData - New user data.
+   */
   const handleSave = (id, updatedData) => {
     setUsers(users.map((user) => (user.id === id ? { ...user, ...updatedData } : user)));
   };
 
-  // Filtered list of users based on the search term
+  /**
+   * Filters the users list based on the search term.
+   */
   const filteredUsers = users.filter((user) =>
     `${user.first_name} ${user.last_name} ${user.email}`
       .toLowerCase()
@@ -77,18 +113,22 @@ const Users = () => {
               key={user.id}
               className="p-4 bg-white shadow-md rounded-lg flex flex-col items-center"
             >
+              {/* User Avatar */}
               <img
                 src={user.avatar}
                 alt={`${user.first_name} ${user.last_name}`}
                 className="w-20 h-20 rounded-full mb-4"
               />
+              {/* User Name */}
               <h3 className="text-lg font-semibold text-primary">
                 {user.first_name} {user.last_name}
               </h3>
+              {/* User Email */}
               <p className="text-sm text-secondary">{user.email}</p>
+              {/* Action Buttons: Edit and Delete */}
               <div className="flex gap-2 mt-4">
                 <button
-                  onClick={() => setEditingUser(user)}
+                  onClick={() => setEditingUser(user)} // Open edit modal
                   className="flex items-center gap-2 bg-accent text-white py-2 px-4 rounded-lg hover:bg-highlight focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent"
                 >
                   <PencilSquareIcon width={20} />
@@ -96,13 +136,12 @@ const Users = () => {
                 </button>
 
                 <button
-                  onClick={() => handleDelete(user.id)}
+                  onClick={() => handleDelete(user.id)} // Delete user
                   className="flex items-center gap-2 bg-highlight text-white py-2 px-4 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-highlight"
                 >
                   <TrashIcon width={20} />
                   <span>Delete</span>
                 </button>
-
               </div>
             </div>
           ))
@@ -114,8 +153,8 @@ const Users = () => {
       {/* Pagination */}
       <div className="flex justify-between mt-6">
         <button
-          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-          disabled={page === 1}
+          onClick={() => setPage((prev) => Math.max(prev - 1, 1))} // Go to previous page
+          disabled={page === 1} // Disable if on first page
           className={`flex items-center gap-2 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 ${page === 1
               ? "bg-gray-300 text-gray-600 cursor-not-allowed"
               : "bg-accent text-white hover:bg-highlight focus:ring-accent"
@@ -125,8 +164,8 @@ const Users = () => {
           <span>Previous</span>
         </button>
         <button
-          onClick={() => setPage((prev) => (prev < totalPages ? prev + 1 : prev))}
-          disabled={page === totalPages}
+          onClick={() => setPage((prev) => (prev < totalPages ? prev + 1 : prev))} // Go to next page
+          disabled={page === totalPages} // Disable if on last page
           className={`flex items-center gap-2 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 ${page === totalPages
               ? "bg-gray-300 text-gray-600 cursor-not-allowed"
               : "bg-accent text-white hover:bg-highlight focus:ring-accent"
@@ -135,15 +174,14 @@ const Users = () => {
           <span>Next</span>
           <ArrowRightIcon width={20} />
         </button>
-
       </div>
 
       {/* Edit User Modal */}
       {editingUser && (
         <EditUserModal
-          user={editingUser}
-          onClose={() => setEditingUser(null)}
-          onSave={handleSave}
+          user={editingUser} // Pass user to be edited
+          onClose={() => setEditingUser(null)} // Close modal
+          onSave={handleSave} // Save changes
         />
       )}
     </div>

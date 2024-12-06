@@ -5,9 +5,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- pwa support -->
+  <!-- Link to the manifest.json file for PWA (Progressive Web App) support -->
   <link rel="manifest" href="/manifest.json">
-  <!-- ios support for pwa -->
+
+  <!-- iOS-specific PWA support -->
+  <!-- Link apple touch icons for different resolutions to ensure the app icon looks good on various Apple devices -->
   <link rel="apple-touch-icon" href="/src/assets/icons/logo-128x128.png">
   <link rel="apple-touch-icon" href="/src/assets/icons/logo-72x72.png">
   <link rel="apple-touch-icon" href="/src/assets/icons/logo-144x144.png">
@@ -15,15 +17,22 @@
   <link rel="apple-touch-icon" href="/src/assets/icons/logo-256x256.png">
   <link rel="apple-touch-icon" href="/src/assets/icons/logo-384x384.png">
   <link rel="apple-touch-icon" href="/src/assets/icons/logo-512x512.png">
+
+  <!-- Set the color of the iOS mobile web app status bar -->
   <meta name="apple-mobile-web-app-status-bar" content="#202c39" />
 
+  <!-- Set the favicon for the webpage -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
+  <!-- Page title -->
   <title>ControlMyDesk</title>
 </head>
 
 <body>
+  <!-- Root element where the React app will be rendered -->
   <div id="root"></div>
+
+  <!-- Main JavaScript file for the React app -->
   <script type="module" src="/src/main.jsx"></script>
 </body>
 
